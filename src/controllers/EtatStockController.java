@@ -4,11 +4,9 @@ import metiers.I_Catalogue;
 
 public class EtatStockController {
     private I_Catalogue catalogue;
-    private I_DAO<?> dao;
 
-    public EtatStockController(I_Catalogue catalogue, I_DAO<?> dao) {
+    public EtatStockController(I_Catalogue catalogue) {
         this.catalogue = catalogue;
-        this.dao = dao;
     }
 
     public String lister(){

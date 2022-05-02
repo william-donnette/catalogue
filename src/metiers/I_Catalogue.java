@@ -1,8 +1,5 @@
 package metiers;
 
-import DAO.I_DAO;
-
-import java.sql.SQLException;
 import java.util.List;
 
 public interface I_Catalogue {
@@ -17,8 +14,13 @@ public interface I_Catalogue {
 	public abstract double getMontantTotalTTC();
 	public abstract String toString();
 	public abstract String getNom();
+	public abstract int getId();
+	public abstract void setId(int id);
 
 	public abstract void clear();
+	public abstract int getNbrProduits();
 
-	void setDAO(I_DAO<I_Produit> daoProd);
+	boolean isValidNom();
+
+	List<I_Produit> getProduits();
 }

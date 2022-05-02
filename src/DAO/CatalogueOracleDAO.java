@@ -1,23 +1,43 @@
 package DAO;
 
+import Factory.DAOAbstracteFactory;
 import metiers.Catalogue;
 import metiers.I_Catalogue;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CatalogueOracleDAO implements I_DAO<I_Catalogue> {
 
     @Override
     public int create(I_Catalogue object) {
-        return 0;
+        CallableStatement cst = null;
+        try{
+            cst = DAOAbstracteFactory.getConnection().prepareCall("{? = call creerCatalogue(?)}");
+            cst.setString(2, object.getNom());
+            cst.registerOutParameter(1, Types.NUMERIC);
+            cst.execute();
+            return cst.getInt(1);
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     @Override
     public I_Catalogue read(String nom) {
-        return new Catalogue();
+        PreparedStatement pst = null;
+        try{
+            pst = DAOAbstracteFactory.getConnection().prepareCall("SELECT * FROM catalogues WHERE nom = ?");
+            pst.setString(1,nom);
+            ResultSet rs = pst.executeQuery();
+            rs.next();
+            return new Catalogue(rs.getInt("idCatalogue"), rs.getString("nom"));
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -27,11 +47,30 @@ public class CatalogueOracleDAO implements I_DAO<I_Catalogue> {
 
     @Override
     public boolean delete(I_Catalogue object) {
-        return false;
+        boolean delete = false;
+        try{
+            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("DELETE FROM catalogues WHERE nom = ?");
+            ps.setString(1, object.getNom());
+            delete = !ps.execute();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return delete;
     }
 
     @Override
     public List<I_Catalogue> findAll() {
-        return null;
+        List<I_Catalogue> l = new ArrayList<>();
+        try{
+            Statement st = DAOAbstracteFactory.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            ResultSet rs = st.executeQuery("SELECT * FROM catalogues ORDER BY nom ASC");
+
+            while(rs.next()){
+                l.add(new Catalogue(rs.getInt("idCatalogue"), rs.getString("nom")));
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return l;
     }
 }

@@ -1,42 +1,16 @@
-DROP Table Clients CASCADE CONSTRAINT;
-DROP Table Vendeurs CASCADE CONSTRAINT;
-DROP Table EtreSuivi CASCADE CONSTRAINT;
-DROP Table Achats CASCADE CONSTRAINT;
+DROP TABLE PRODUITS CASCADE CONSTRAINT;
+CREATE SEQUENCE produit_seq START WITH 1;
+CREATE TABLE PRODUITS
+(
+id NUMBER, nom VARCHAR(30), quantiteStock NUMBER, prixUnitaireHT NUMBER,
+CONSTRAINT pk_produits PRIMARY KEY (id),
+CONSTRAINT uni_nom UNIQUE (nom)
+)
 
-CREATE TABLE Clients
-(numeroClient NUMBER, nomClient VARCHAR(20), prenomClient VARCHAR(20), categorieClient VARCHAR(10) DEFAULT 'PROSPECT', villeClient VARCHAR(30),
-CONSTRAINT pk_Clients PRIMARY KEY (numeroClient),
-CONSTRAINT ck_typeClient CHECK (categorieClient IN ('CLIENT', 'PROSPECT')));
-
-CREATE TABLE Vendeurs
-(numeroVendeur NUMBER, nomVendeur VARCHAR(20) NOT NULL, prenomVendeur VARCHAR(20) NOT NULL,
-CONSTRAINT pk_Vendeurs PRIMARY KEY (numeroVendeur));
-
-CREATE TABLE EtreSuivi
-(numeroClient NUMBER, numeroVendeur NUMBER,
-CONSTRAINT pk_etreSuivi PRIMARY KEY (numeroClient, numeroVendeur),
-CONSTRAINT fk_etresuivi_numeroClient FOREIGN KEY (numeroClient) REFERENCES Clients(numeroClient),
-CONSTRAINT fk_etresuivi_numeroVendeur FOREIGN KEY (numeroVendeur) REFERENCES Vendeurs(numeroVendeur));
-
-CREATE TABLE Achats
-(referenceAchat VARCHAR(3), montantAchat NUMBER, numeroClient NUMBER, numeroVendeur NUMBER,
-CONSTRAINT pk_achats PRIMARY KEY (referenceAchat),
-CONSTRAINT fk_achats FOREIGN KEY (numeroClient, numeroVendeur) REFERENCES EtreSuivi(numeroClient, numeroVendeur));
-
-CREATE OR REPLACE TRIGGER limit_vendeur AFTER INSERT ON EtreSuivi
-FOR EACH ROW
-DECLARE nb_suivi NUMBER;
+CREATE OR REPLACE FUNCTION creerProduit( p_nom IN PRODUITS.nom%TYPE,  p_quantite IN PRODUITS.quantiteStock%TYPE, p_prixUnitaireHT   IN PRODUITS.prixUnitaireHT%TYPE) IS
+can_create NUMBER
 BEGIN
-SELECT COUNT(*) INTO nb_suivi FROM EtreSuivi WHERE numeroClient = :NEW.numeroClient;
-IF nb_suivi >= 2
-THEN RAISE_APPLICATION_ERROR (-20002, 'Le client est déjà suivi par au moins 3 vendeurs');
-END IF;
-END;
-
-CREATE OR REPLACE TRIGGER set_client AFTER INSERT ON Achats
-FOR EACH ROW
-BEGIN
-UPDATE Clients
-SET categorieClient = 'CLIENT'
-WHERE numeroClient = :NEW.numeroClient;
+    INSERT INTO PRODUITS (id, nom, quantiteStock, prixUnitaireHT) VALUES (produit_seq.NEXTVAL, p_nom, p_quantite, p_prixUnitaireHT);
+    can_create := 1;
+    RETURN can_create;
 END;

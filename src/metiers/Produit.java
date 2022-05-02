@@ -1,19 +1,25 @@
 package metiers;
 
 public class Produit implements I_Produit {
-    private I_Catalogue catalogue;
     private int id;
     private int quantiteStock;
     private String nom;
     private double prixUnitaireHT;
+    private int idCatalogue;
     private static double tauxTVA = 0.2;
 
+    public Produit(String nom, double prixUnitaireHT,int quantiteStock, int idCatalogue) {
+        this.nom = nom.trim().replaceAll("\t", " ").replaceAll(" +", " ");
+        this.prixUnitaireHT = prixUnitaireHT;
+        this.quantiteStock = quantiteStock;
+        this.idCatalogue = idCatalogue;
+    }
+
     public Produit(String nom, double prixUnitaireHT,int quantiteStock) {
-        if(nom != null) {
-            this.quantiteStock = quantiteStock;
-            this.nom = nom.trim().replaceAll("\t", " ").replaceAll(" +", " ");
-            this.prixUnitaireHT = prixUnitaireHT;
-        }
+        this.nom = nom.trim().replaceAll("\t", " ").replaceAll(" +", " ");
+        this.prixUnitaireHT = prixUnitaireHT;
+        this.quantiteStock = quantiteStock;
+        this.idCatalogue = -1;
     }
 
     @Override
@@ -22,14 +28,6 @@ public class Produit implements I_Produit {
             return false;
         quantiteStock += qteAchetee;
         return true;
-    }
-
-    public String getNomCatalogue(){
-        return catalogue.getNom();
-    }
-
-    public void setCatalogue(I_Catalogue catalogue) {
-        this.catalogue = catalogue;
     }
 
     @Override
@@ -70,10 +68,33 @@ public class Produit implements I_Produit {
         return id;
     }
 
+    public boolean isValidQuantity() {
+        return quantiteStock >= 0;
+    }
+
+    public boolean isValidPrix(){
+        return prixUnitaireHT > 0;
+    }
+
+    @Override
+    public boolean isValidNom() {
+        return nom != null;
+    }
+
     @Override
     public String toString() {
         String prixUnitaireHTAvecVirgule = String.format("%.2f", prixUnitaireHT).replaceAll("\\.", ",");
         String prixUnitaireTTCAvecVirgule = String.format("%.2f", getPrixUnitaireTTC()).replaceAll("\\.", ",");
         return nom+" - prix HT : "+prixUnitaireHTAvecVirgule+" € - prix TTC : "+prixUnitaireTTCAvecVirgule+" € - quantité en stock : "+quantiteStock;
+    }
+
+    @Override
+    public void setIdCatalogue(int idCatalogue){
+        this.idCatalogue = idCatalogue;
+    }
+
+    @Override
+    public int getIdCatalogue() {
+        return idCatalogue;
     }
 }

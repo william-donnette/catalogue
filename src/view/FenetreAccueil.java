@@ -1,7 +1,12 @@
 package view;
 
+import controllers.CatalogueController;
+import controllers.EnsembleCatalogueController;
+import metiers.I_Catalogue;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import javax.swing.*;
 
 public class FenetreAccueil extends JFrame implements ActionListener {
@@ -11,6 +16,7 @@ public class FenetreAccueil extends JFrame implements ActionListener {
 	private JLabel lbNbCatalogues;
 	private JComboBox cmbSupprimer, cmbSelectionner;
 	private TextArea taDetailCatalogues;
+	private EnsembleCatalogueController controller;
 
 	public FenetreAccueil() {
 		setTitle("Catalogues");
@@ -75,12 +81,9 @@ public class FenetreAccueil extends JFrame implements ActionListener {
 		btAjouter.addActionListener(this);
 		btSupprimer.addActionListener(this);
 		btSelectionner.addActionListener(this);
-		
-		String[] tab  = {"Formacia" , "Le Redoutable", "Noitaicossa"}; 
-		modifierListesCatalogues(tab);
-		String[] tab2 = {"Formacia : 6 produits" , "Le Redoutable : 4 produits" , "Noitaicossa : 0 produits" };
-		modifierDetailCatalogues(tab2);
-		modifierNbCatalogues(3);
+
+		controller = new EnsembleCatalogueController();
+		update();
 		setVisible(true);
 	}
 
@@ -91,24 +94,39 @@ public class FenetreAccueil extends JFrame implements ActionListener {
 			if (!texteAjout.equals(""))
 			{
 				System.out.println("ajouter le catalogue "+texteAjout);
+				controller.addCatalogue(texteAjout);
 				txtAjouter.setText(null);
+				update();
 			}
 		}
 		if (e.getSource() == btSupprimer)
 		{
 			String texteSupprime = (String)cmbSupprimer.getSelectedItem();
-			if (texteSupprime != null)
+			if (texteSupprime != null){
+				controller.removeCatalogue(texteSupprime);
 				System.out.println("supprime catalogue "+texteSupprime);
+				update();
+			}
 		}
 		if (e.getSource() == btSelectionner)
 		{
 			String texteSelection = (String)cmbSupprimer.getSelectedItem();
 			if (texteSelection != null) 
 			{
+				controller.selectCatalogue(texteSelection);
 				System.out.println("selectionne catalogue "+texteSelection);
 				this.dispose();
 			}
 		}	
+	}
+
+	private void update() {
+		System.out.println("UPDATE");
+		String[] listeNomCatalogues  = controller.getListeNomCatalogues();
+		modifierListesCatalogues(listeNomCatalogues);
+		String[] listeCatalogues = controller.getListeCatalogueAvecNbrProduits();
+		modifierDetailCatalogues(listeCatalogues);
+		modifierNbCatalogues(controller.getSize());
 	}
 
 	private void modifierListesCatalogues(String[] nomsCatalogues) {

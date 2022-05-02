@@ -3,7 +3,7 @@ package DAO;
 import metiers.I_Produit;
 import java.util.List;
 
-public class AdaptateurProduitXMLDAO implements I_DAO<I_Produit> {
+public class AdaptateurProduitXMLDAO implements I_DAOProduits<I_Produit> {
 
     private ProduitDAO_XML px;
 
@@ -34,5 +34,9 @@ public class AdaptateurProduitXMLDAO implements I_DAO<I_Produit> {
     @Override
     public List<I_Produit> findAll() {
         return px.lireTous();
+    }@Override
+    public List<I_Produit> findAllByCatalogue(int idCatalogue) {
+        return null;
     }
-}
+
+    }

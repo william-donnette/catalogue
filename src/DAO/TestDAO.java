@@ -4,7 +4,7 @@ import metiers.I_Produit;
 
 import java.util.List;
 
-public class TestDAO implements I_DAO<I_Produit> {
+public class TestDAO implements I_DAOProduits<I_Produit> {
     @Override
     public int create(I_Produit object) {
         return 0;
@@ -27,6 +27,11 @@ public class TestDAO implements I_DAO<I_Produit> {
 
     @Override
     public List<I_Produit> findAll() {
+        return null;
+    }
+
+    @Override
+    public List<I_Produit> findAllByCatalogue(int idCatalogue) {
         return null;
     }
 }

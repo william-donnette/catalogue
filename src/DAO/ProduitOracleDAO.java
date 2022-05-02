@@ -4,27 +4,23 @@ import Factory.DAOAbstracteFactory;
 import metiers.I_Produit;
 import metiers.Produit;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProduitOracleDAO implements I_DAO<I_Produit> {
-
-
-
+public class ProduitOracleDAO implements I_DAOProduits<I_Produit> {
 
     @Override
     public int create(I_Produit object) {
         CallableStatement cst = null;
         try{
-            cst = DAOAbstracteFactory.getConnection().prepareCall("{? = call creerProduit(?, ?, ?)}");
+            cst = DAOAbstracteFactory.getConnection().prepareCall("{? = call creerProduit(?, ?, ?, ?)}");
             cst.setString(2, object.getNom());
             cst.setInt(3, object.getQuantite());
             cst.setDouble(4, object.getPrixUnitaireHT());
+            cst.setInt(5, object.getIdCatalogue());
             cst.registerOutParameter(1, Types.NUMERIC);
             cst.execute();
-            cst.getInt(1);
             return cst.getInt(1);
         }catch(SQLException e){
             e.printStackTrace();
@@ -42,10 +38,11 @@ public class ProduitOracleDAO implements I_DAO<I_Produit> {
     public boolean update(I_Produit object) {
         boolean update = false;
         try{
-            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("UPDATE Produits SET quantiteStock=?, prixUnitaireHT=? WHERE nom=?");
+            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("UPDATE Produits SET quantiteStock=?, prixUnitaireHT=? WHERE nom=? AND idCatalogue=?");
             ps.setInt(1, object.getQuantite());
             ps.setDouble(2, object.getPrixUnitaireHT());
             ps.setString(3, object.getNom());
+            ps.setInt(4, object.getIdCatalogue());
             update = !ps.execute();
         }catch(SQLException e){
             e.printStackTrace();
@@ -58,8 +55,9 @@ public class ProduitOracleDAO implements I_DAO<I_Produit> {
     public boolean delete(I_Produit object) {
         boolean delete = false;
         try{
-            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("DELETE FROM Produits WHERE nom=?");
+            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("DELETE FROM Produits WHERE nom=? AND idCatalogue=?");
             ps.setString(1, object.getNom());
+            ps.setInt(2, object.getIdCatalogue());
             delete = !ps.execute();
         }catch(SQLException e){
             e.printStackTrace();
@@ -76,6 +74,23 @@ public class ProduitOracleDAO implements I_DAO<I_Produit> {
 
             while(rs.next()){
                 l.add(new Produit(rs.getString("nom"), rs.getDouble("prixUnitaireHT"), rs.getInt("quantiteStock")));
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return l;
+    }
+
+    @Override
+    public List<I_Produit> findAllByCatalogue(int idCatalogue){
+        List<I_Produit> l = new ArrayList<>();
+        try{
+            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("SELECT * FROM Produits WHERE idCatalogue=? ORDER BY nom ASC", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            ps.setInt(1,idCatalogue);
+            ResultSet rs = ps.executeQuery();
+
+            while(rs.next()){
+                l.add(new Produit(rs.getString("nom"), rs.getDouble("prixUnitaireHT"), rs.getInt("quantiteStock"), rs.getInt("idCatalogue")));
             }
         }catch(SQLException e){
             e.printStackTrace();

@@ -8,11 +8,9 @@ import java.sql.SQLException;
 
 public class AchatVenteController {
     private I_Catalogue catalogue;
-    private I_DAO<?> dao;
 
-    public AchatVenteController(I_Catalogue catalogue, I_DAO<?> dao) {
+    public AchatVenteController(I_Catalogue catalogue) {
         this.catalogue = catalogue;
-        this.dao = dao;
     }
 
     public boolean acheter(String nom, int qte){

@@ -1,57 +1,58 @@
 package metiers;
 
-import DAO.I_DAO;
-import DAO.TestDAO;
+import DAO.I_DAOProduits;
+import Factory.DAOAbstracteFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Catalogue implements I_Catalogue {
 
     private List<I_Produit> lesProduits;
-    private I_DAO dao;
+    private int id;
     private String nom;
+    private I_DAOProduits dao;
 
     public Catalogue(){
-        this.nom = "test";
+        nom = "test";
         lesProduits = new ArrayList<>();
-        dao = new TestDAO();
+        dao = DAOAbstracteFactory.getInstance().createDAOProduit();
+        id = -1;
     }
 
     public Catalogue(String nom){
         this();
         this.nom = nom;
+        id = -1;
     }
 
-    public Catalogue(String nom, I_DAO dao){
+    public Catalogue(int id, String nom){
         this(nom);
-        this.dao = dao;
+        this.id = id;
     }
 
+    @Override
     public String getNom() {
         return nom;
     }
 
     @Override
     public boolean addProduit(I_Produit produit) {
-        try {
-            if(produit.getQuantite() < 0 || produit.getPrixUnitaireHT() <= 0 || existe(produit.getNom()) != null)
-                return false;
-            return lesProduits.add(produit);
-        } catch (NullPointerException e) {
-            return false;
+        if(produit.isValidQuantity() && produit.isValidPrix() || existe(nom) != null || produit.isValidNom()){
+            produit.setIdCatalogue(id);
+            if (dao.create(produit) != -1){
+                lesProduits.add(produit);
+                return true;
+            }
         }
-
+        return false;
     }
 
     @Override
     public boolean addProduit(String nom, double prix, int qte) {
-        if(qte < 0 || prix <= 0 || existe(nom) != null || nom == null)
-            return false;
-        return lesProduits.add(new Produit(nom, prix, qte));
+        return addProduit(new Produit(nom, prix, qte, id));
     }
 
     @Override
@@ -59,8 +60,7 @@ public class Catalogue implements I_Catalogue {
         try {
             int added = 0;
             for(I_Produit pr : l){
-                if(existe(pr.getNom()) == null && pr.getPrixUnitaireHT() > 0 && pr.getQuantite() >= 0){
-                    lesProduits.add(pr);
+                if (addProduit(pr)){
                     added++;
                 }
             }
@@ -102,12 +102,13 @@ public class Catalogue implements I_Catalogue {
 
     @Override
     public String[] getNomProduits() {
-        String[] s = new String[lesProduits.size()];
-        lesProduits.sort(Comparator.comparing(I_Produit::getNom));
-        for(I_Produit p : lesProduits){
-            s[lesProduits.indexOf(p)] = p.getNom();
+        List<String> listeNomProduits = new ArrayList<>();
+        for (I_Produit produit: lesProduits) {
+            listeNomProduits.add(produit.getNom());
         }
-        return s;
+        String [] listeNoms = new String [listeNomProduits.size()];
+        listeNomProduits.toArray(listeNoms);
+        return listeNoms;
     }
 
     @Override
@@ -127,8 +128,19 @@ public class Catalogue implements I_Catalogue {
     }
 
     @Override
-    public void setDAO(I_DAO<I_Produit> daoProd) {
-        dao = daoProd;
+    public int getNbrProduits() {
+        return lesProduits.size();
+    }
+
+    @Override
+    public boolean isValidNom() {
+        return nom != null;
+    }
+
+    @Override
+    public List<I_Produit> getProduits() {
+        lesProduits = dao.findAllByCatalogue(id);
+        return lesProduits;
     }
 
     private I_Produit existe(String nom){
@@ -155,5 +167,15 @@ public class Catalogue implements I_Catalogue {
         s += "\nMontant total TTC du stock : "+ montantTotalTTCAvecVirgule +" €";
 
         return s;
+    }
+
+    @Override
+    public void setId(int id){
+        this.id = id;
+    }
+
+    @Override
+    public int getId(){
+        return id;
     }
 }

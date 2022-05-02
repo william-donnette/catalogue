@@ -7,18 +7,13 @@ import metiers.Produit;
 
 public class ProduitController {
     private I_Catalogue catalogue;
-    private I_DAO dao;
 
-    public ProduitController(I_Catalogue catalogue, I_DAO dao) {
+    public ProduitController(I_Catalogue catalogue) {
         this.catalogue = catalogue;
-        this.dao = dao;
     }
 
     public boolean creer(String nom, double prix, int qte) {
-        I_Produit p = new Produit(nom, prix, qte);
-        if(!catalogue.addProduit(p))
-            return false;
-        return dao.create(p) != 0;
+        return catalogue.addProduit(nom, prix, qte);
     }
 
     public boolean supprimer(String nom) {

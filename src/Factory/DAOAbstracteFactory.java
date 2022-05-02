@@ -1,6 +1,7 @@
 package Factory;
 
 import DAO.I_DAO;
+import DAO.I_DAOProduits;
 import metiers.I_Catalogue;
 import metiers.I_Produit;
 
@@ -32,7 +33,7 @@ public abstract class DAOAbstracteFactory {
         return cn;
     }
 
-    public abstract I_DAO<I_Produit> createDAOProduit();
+    public abstract I_DAOProduits<I_Produit> createDAOProduit();
     public abstract I_DAO<I_Catalogue> createDAOCatalogue();
 
 }
