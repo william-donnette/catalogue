@@ -11,26 +11,13 @@ import java.sql.SQLException;
 
 public abstract class DAOAbstracteFactory {
     public static DAOAbstracteFactory instance;
-    private static Connection cn;
-    private static String url = "jdbc:oracle:thin:@162.38.222.149:1521:iut";
-    private static String login = "donnettew";
-    private static String mdp = "081221408JH";
+
 
     public synchronized static DAOAbstracteFactory getInstance(){
         if(instance == null){
-            instance = new DAOOracleFactory();
-            try{
-                Class.forName("oracle.jdbc.driver.OracleDriver");
-                cn = DriverManager.getConnection(url, login, mdp);
-            }catch(ClassNotFoundException | SQLException e){
-                e.printStackTrace();
-            }
+            instance = new DAOXMLFactory();
         }
         return instance;
-    }
-
-    public static Connection getConnection() {
-        return cn;
     }
 
     public abstract I_DAOProduits<I_Produit> createDAOProduit();

@@ -1,13 +1,9 @@
 package controllers;
 
-import DAO.I_DAO;
-import Factory.DAOAbstracteFactory;
 import metiers.EnsembleCatalogue;
-import metiers.I_Catalogue;
 import view.FenetrePrincipale;
 
 public class EnsembleCatalogueController {
-    private I_DAO<I_Catalogue> daoCat;
     private EnsembleCatalogue listeCatalogues;
 
     public EnsembleCatalogueController(){

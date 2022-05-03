@@ -17,6 +17,9 @@ public class EnsembleCatalogue {
     public EnsembleCatalogue() {
         dao = DAOAbstracteFactory.getInstance().createDAOCatalogue();;
         catalogues = getAll();
+        for (I_Catalogue catalogue : catalogues){
+            catalogue.getProduits();
+        }
     }
 
     public List<I_Catalogue> getAll(){

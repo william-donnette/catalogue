@@ -1,6 +1,7 @@
 package DAO;
 
 import Factory.DAOAbstracteFactory;
+import Factory.DAOOracleFactory;
 import metiers.Catalogue;
 import metiers.I_Catalogue;
 
@@ -14,7 +15,7 @@ public class CatalogueOracleDAO implements I_DAO<I_Catalogue> {
     public int create(I_Catalogue object) {
         CallableStatement cst = null;
         try{
-            cst = DAOAbstracteFactory.getConnection().prepareCall("{? = call creerCatalogue(?)}");
+            cst = DAOOracleFactory.getConnection().prepareCall("{? = call creerCatalogue(?)}");
             cst.setString(2, object.getNom());
             cst.registerOutParameter(1, Types.NUMERIC);
             cst.execute();
@@ -29,7 +30,7 @@ public class CatalogueOracleDAO implements I_DAO<I_Catalogue> {
     public I_Catalogue read(String nom) {
         PreparedStatement pst = null;
         try{
-            pst = DAOAbstracteFactory.getConnection().prepareCall("SELECT * FROM catalogues WHERE nom = ?");
+            pst = DAOOracleFactory.getConnection().prepareCall("SELECT * FROM catalogues WHERE nom = ?");
             pst.setString(1,nom);
             ResultSet rs = pst.executeQuery();
             rs.next();
@@ -49,7 +50,7 @@ public class CatalogueOracleDAO implements I_DAO<I_Catalogue> {
     public boolean delete(I_Catalogue object) {
         boolean delete = false;
         try{
-            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("DELETE FROM catalogues WHERE nom = ?");
+            PreparedStatement ps = DAOOracleFactory.getConnection().prepareStatement("DELETE FROM catalogues WHERE nom = ?");
             ps.setString(1, object.getNom());
             delete = !ps.execute();
         }catch(SQLException e){
@@ -62,7 +63,7 @@ public class CatalogueOracleDAO implements I_DAO<I_Catalogue> {
     public List<I_Catalogue> findAll() {
         List<I_Catalogue> l = new ArrayList<>();
         try{
-            Statement st = DAOAbstracteFactory.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            Statement st = DAOOracleFactory.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = st.executeQuery("SELECT * FROM catalogues ORDER BY nom ASC");
 
             while(rs.next()){

@@ -1,6 +1,7 @@
 package DAO;
 
 import Factory.DAOAbstracteFactory;
+import Factory.DAOOracleFactory;
 import metiers.I_Produit;
 import metiers.Produit;
 
@@ -14,7 +15,7 @@ public class ProduitOracleDAO implements I_DAOProduits<I_Produit> {
     public int create(I_Produit object) {
         CallableStatement cst = null;
         try{
-            cst = DAOAbstracteFactory.getConnection().prepareCall("{? = call creerProduit(?, ?, ?, ?)}");
+            cst = DAOOracleFactory.getConnection().prepareCall("{? = call creerProduit(?, ?, ?, ?)}");
             cst.setString(2, object.getNom());
             cst.setInt(3, object.getQuantite());
             cst.setDouble(4, object.getPrixUnitaireHT());
@@ -38,7 +39,7 @@ public class ProduitOracleDAO implements I_DAOProduits<I_Produit> {
     public boolean update(I_Produit object) {
         boolean update = false;
         try{
-            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("UPDATE Produits SET quantiteStock=?, prixUnitaireHT=? WHERE nom=? AND idCatalogue=?");
+            PreparedStatement ps = DAOOracleFactory.getConnection().prepareStatement("UPDATE Produits SET quantiteStock=?, prixUnitaireHT=? WHERE nom=? AND idCatalogue=?");
             ps.setInt(1, object.getQuantite());
             ps.setDouble(2, object.getPrixUnitaireHT());
             ps.setString(3, object.getNom());
@@ -55,7 +56,7 @@ public class ProduitOracleDAO implements I_DAOProduits<I_Produit> {
     public boolean delete(I_Produit object) {
         boolean delete = false;
         try{
-            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("DELETE FROM Produits WHERE nom=? AND idCatalogue=?");
+            PreparedStatement ps = DAOOracleFactory.getConnection().prepareStatement("DELETE FROM Produits WHERE nom=? AND idCatalogue=?");
             ps.setString(1, object.getNom());
             ps.setInt(2, object.getIdCatalogue());
             delete = !ps.execute();
@@ -69,7 +70,7 @@ public class ProduitOracleDAO implements I_DAOProduits<I_Produit> {
     public List<I_Produit> findAll(){
         List<I_Produit> l = new ArrayList<>();
         try{
-            Statement st = DAOAbstracteFactory.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            Statement st = DAOOracleFactory.getConnection().createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             ResultSet rs = st.executeQuery("SELECT * FROM Produits ORDER BY nom ASC");
 
             while(rs.next()){
@@ -85,7 +86,7 @@ public class ProduitOracleDAO implements I_DAOProduits<I_Produit> {
     public List<I_Produit> findAllByCatalogue(int idCatalogue){
         List<I_Produit> l = new ArrayList<>();
         try{
-            PreparedStatement ps = DAOAbstracteFactory.getConnection().prepareStatement("SELECT * FROM Produits WHERE idCatalogue=? ORDER BY nom ASC", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            PreparedStatement ps = DAOOracleFactory.getConnection().prepareStatement("SELECT * FROM Produits WHERE idCatalogue=? ORDER BY nom ASC", ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
             ps.setInt(1,idCatalogue);
             ResultSet rs = ps.executeQuery();
 

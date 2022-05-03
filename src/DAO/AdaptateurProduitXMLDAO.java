@@ -34,7 +34,8 @@ public class AdaptateurProduitXMLDAO implements I_DAOProduits<I_Produit> {
     @Override
     public List<I_Produit> findAll() {
         return px.lireTous();
-    }@Override
+    }
+    @Override
     public List<I_Produit> findAllByCatalogue(int idCatalogue) {
         return null;
     }

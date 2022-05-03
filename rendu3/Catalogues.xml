@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listeCatalogues>
+    <catalogue id="1">
+        <nom>Catalogue1</nom>
+    </catalogue>
+    <catalogue id="2">
+        <nom>Catalogue2</nom>
+    </catalogue>
+</listeCatalogues>

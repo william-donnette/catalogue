@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listeProduits>
+    <produit nom="Mars" idCatalogue="1">
+        <prixHT>4.0</prixHT>
+        <quantite>14</quantite>
+    </produit>
+    <produit nom="Bounty" idCatalogue="2">
+        <prixHT>8.0</prixHT>
+        <quantite>7</quantite>
+    </produit>
+    <produit nom="Raider" idCatalogue="1">
+        <prixHT>5.5</prixHT>
+        <quantite>7</quantite>
+    </produit>
+    <produit nom="Treets" idCatalogue="1">
+        <prixHT>3.6</prixHT>
+        <quantite>23</quantite>
+    </produit>
+<produit nom="Mars" idCatalogue="2"><prixHT>2.0</prixHT><quantite>8</quantite></produit></listeProduits>

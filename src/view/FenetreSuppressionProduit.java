@@ -12,7 +12,7 @@ public class FenetreSuppressionProduit extends JFrame implements ActionListener 
 	private JComboBox<String> combo;
 	private JLabel labelConfirmation;
 	private CatalogueController cc;
-	public FenetreSuppressionProduit(String[] lesProduits, CatalogueController cc) {
+	public FenetreSuppressionProduit(CatalogueController cc) {
 		this.cc = cc;
 		setTitle("Suppression produit");
 		setBounds(500, 500, 200, 105);
@@ -20,7 +20,7 @@ public class FenetreSuppressionProduit extends JFrame implements ActionListener 
 		contentPane.setLayout(new FlowLayout());
 		btSupprimer = new JButton("Supprimer");
 
-		combo = new JComboBox<String>(lesProduits);
+		combo = new JComboBox<String>(cc.listeNomProduits());
 		combo.setPreferredSize(new Dimension(100, 20));
 		contentPane.add(new JLabel("Produit"));
 		contentPane.add(combo);

@@ -2,6 +2,7 @@ package controllers;
 
 import metiers.I_Catalogue;
 import metiers.EnsembleCatalogue;
+import view.FenetreAccueil;
 
 public class CatalogueController {
 
@@ -11,12 +12,16 @@ public class CatalogueController {
 
 
     public CatalogueController(String nomCatalogue){
-            EnsembleCatalogue catalogues = new EnsembleCatalogue();
-            I_Catalogue catalogue = catalogues.existe(nomCatalogue);
-            catalogue.getProduits();
+        EnsembleCatalogue catalogues = new EnsembleCatalogue();
+        I_Catalogue catalogue = catalogues.existe(nomCatalogue);
+        if (catalogue != null) {
             achatVenteController = new AchatVenteController(catalogue);
             etatStockController = new EtatStockController(catalogue);
             produitController = new ProduitController(catalogue);
+        }
+        else {
+            new FenetreAccueil();
+        }
     }
 
     public String lister(){
